@@ -6,7 +6,6 @@
     ref?: any,
   }
   type Grid = Cell[][]
-  type MovementKey = 'h' | 'j' | 'k' | 'l'
   enum Direction {
     Up,
     Down,
@@ -100,6 +99,9 @@
     }
   }
 
+  function shouldRenderVSeparator(y: number): boolean {
+    return (y + 1) % 3 === 0 && y !== MAX_CELL_INDEX
+  }
 
 </script>
 
@@ -119,7 +121,7 @@
           </div>
         {/each}
       </div>
-      {#if (y + 1) % 3 === 0 && y !== 8}
+      {#if shouldRenderVSeparator(y)}
         <div class="v-separator"></div>
       {/if}
     {/each}
