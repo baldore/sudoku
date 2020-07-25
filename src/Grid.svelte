@@ -1,4 +1,6 @@
 <script lang="ts">
+  // TODO: Split in different  files. Too much logic in one file.
+  // TODO: Add logic to clean a cell by pressing BACKSPACE or 0
   type Cell = {
     x: number,
     y: number,
@@ -46,13 +48,14 @@
     const { x, y } = cell
 
     if (isValidNumberKey(key)) {
-      grid[x][y].value = key
+      grid[y][x].value = key
       return
     }
 
     if (isMovementKey(e)) {
       const direction = getDirectionFromKeyEvent(e)
       focusToCell(direction, cell)
+      return
     }
   }
 
