@@ -1,42 +1,23 @@
 <script lang="ts">
-  // TODO: Split in different  files. Too much logic in one file.
-  // TODO: Add logic to clean a cell by pressing BACKSPACE or 0
-  type Cell = {
-    x: number,
-    y: number,
-    value: string,
-    ref?: any,
-  }
-  type Grid = Cell[][]
-  enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
-  }
+  import type { Cell, Grid } from './types'
+  import { Direction, ARROW_CODES } from './movement'
 
   const MIN_CELL_INDEX = 0
   const MAX_CELL_INDEX = 8
-  const ARROW_CODES = {
-    LEFT: 37,
-    RIGHT: 39,
-    DOWN: 40,
-    UP: 38,
-  }
 
   let grid: Grid = makeGrid()
 
   function makeGrid(): Grid {
-    return new Array(9).fill(undefined).map((_, y) =>
-      new Array(9).fill(undefined).map((_, x) =>
-        makeCell({ x, y })
+    return new Array(9)
+      .fill(undefined)
+      .map((_, y) =>
+        new Array(9).fill(undefined).map((_, x) => makeCell({ x, y })),
       )
-    )
   }
 
-  function makeCell(opts: { x: number, y: number }): Cell {
+  function makeCell(opts: { x: number; y: number }): Cell {
     return {
-      value: "",
+      value: '',
       x: opts.x,
       y: opts.y,
     }
@@ -87,18 +68,18 @@
     const { x, y } = currentCell
 
     switch (direction) {
-    case Direction.Left:
-      grid[y][Math.max(x - 1, MIN_CELL_INDEX)]?.ref?.focus()
-      return
-    case Direction.Down:
-      grid[Math.min(y + 1, MAX_CELL_INDEX)][x]?.ref?.focus()
-      return
-    case Direction.Up:
-      grid[Math.max(y - 1, MIN_CELL_INDEX)][x]?.ref?.focus()
-      return
-    case Direction.Right:
-      grid[y][Math.min(x + 1, MAX_CELL_INDEX)]?.ref?.focus()
-      return
+      case Direction.Left:
+        grid[y][Math.max(x - 1, MIN_CELL_INDEX)]?.ref?.focus()
+        return
+      case Direction.Down:
+        grid[Math.min(y + 1, MAX_CELL_INDEX)][x]?.ref?.focus()
+        return
+      case Direction.Up:
+        grid[Math.max(y - 1, MIN_CELL_INDEX)][x]?.ref?.focus()
+        return
+      case Direction.Right:
+        grid[y][Math.min(x + 1, MAX_CELL_INDEX)]?.ref?.focus()
+        return
     }
   }
 
@@ -110,31 +91,6 @@
     return (y + 1) % 3 === 0 && y !== MAX_CELL_INDEX
   }
 </script>
-
-<div class="container">
-  <div class="grid">
-    {#each grid as column, y}
-      <div class="row">
-        {#each column as cell, x}
-          <div class="cell">
-            <input
-              type=text
-              bind:value={cell.value}
-              maxlength={1}
-              on:keydown={(e) => onKeyDown(e, cell)}
-              bind:this={cell.ref} >
-          </div>
-          {#if shouldRenderHSeparator(x)}
-            <div class="h-separator"></div>
-          {/if}
-        {/each}
-      </div>
-      {#if shouldRenderVSeparator(y)}
-        <div class="v-separator"></div>
-      {/if}
-    {/each}
-  </div>
-</div>
 
 <style>
   .container {
@@ -158,7 +114,6 @@
     background-color: blueviolet;
   }
 
-
   .v-separator {
     height: 1px;
     width: 100%;
@@ -174,3 +129,28 @@
     border-color: #dedede;
   }
 </style>
+
+<div class="container">
+  <div class="grid">
+    {#each grid as column, y}
+      <div class="row">
+        {#each column as cell, x}
+          <div class="cell">
+            <input
+              type="text"
+              bind:value={cell.value}
+              maxlength={1}
+              on:keydown={(e) => onKeyDown(e, cell)}
+              bind:this={cell.ref} />
+          </div>
+          {#if shouldRenderHSeparator(x)}
+            <div class="h-separator" />
+          {/if}
+        {/each}
+      </div>
+      {#if shouldRenderVSeparator(y)}
+        <div class="v-separator" />
+      {/if}
+    {/each}
+  </div>
+</div>
