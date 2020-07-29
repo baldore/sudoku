@@ -1,12 +1,9 @@
 <script lang="ts">
-  import Grid from './Grid.svelte'
+  import Sudoku from './Sudoku.svelte'
+  import { makeGrid } from './sudoku'
+
+  const grid = makeGrid()
 </script>
-
-<main>
-  <h1>Sudoku</h1>
-
-  <Grid />
-</main>
 
 <style>
   main {
@@ -29,3 +26,9 @@
     }
   }
 </style>
+
+<main>
+  <h1>Sudoku</h1>
+
+  <Sudoku {grid} />
+</main>
