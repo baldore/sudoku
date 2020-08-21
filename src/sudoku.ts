@@ -4,7 +4,7 @@ import { Direction, ARROW_CODES } from './movement'
 export const MIN_CELL_INDEX = 0
 export const MAX_CELL_INDEX = 8
 
-export function makeGrid(): Grid {
+export function makeEmptyGrid(): Grid {
   return new Array(9)
     .fill(undefined)
     .map((_, y) =>
@@ -20,33 +20,16 @@ function makeCell(opts: { x: number; y: number }): Cell {
   }
 }
 
-function isValidNumberKey(key: string): boolean {
+export function isValidNumberKey(key: string): boolean {
   return /^[1-9]/.test(key)
 }
 
-function isMovementKey(e: KeyboardEvent): boolean {
+export function isMovementKey(e: KeyboardEvent): boolean {
   const { UP, DOWN, LEFT, RIGHT } = ARROW_CODES
   return /^[hjkl]/.test(e.key) || [UP, DOWN, LEFT, RIGHT].includes(e.keyCode)
 }
 
-export function handleKeyEvent(e: KeyboardEvent, grid: Grid, cell: Cell) {
-  e.preventDefault()
-  const key = e.key
-  const { x, y } = cell
-
-  if (isValidNumberKey(key)) {
-    grid[y][x].value = key
-    return
-  }
-
-  if (isMovementKey(e)) {
-    const direction = getDirectionFromKeyEvent(e)
-    focusToCell(direction, grid, cell)
-    return
-  }
-}
-
-function getDirectionFromKeyEvent(e: KeyboardEvent): Direction {
+export function getDirectionFromKeyEvent(e: KeyboardEvent): Direction {
   if (e.key === 'h' || e.keyCode === ARROW_CODES.LEFT) {
     return Direction.Left
   }
@@ -61,21 +44,28 @@ function getDirectionFromKeyEvent(e: KeyboardEvent): Direction {
   }
 }
 
-function focusToCell(direction: Direction, grid: Grid, currentCell: Cell) {
+function getNewPosition(direction: Direction, currentCell: Cell) {
   const { x, y } = currentCell
 
   switch (direction) {
     case Direction.Left:
-      grid[y][Math.max(x - 1, MIN_CELL_INDEX)]?.ref?.focus()
-      return
+      return { x: Math.max(x - 1, MIN_CELL_INDEX), y }
     case Direction.Down:
-      grid[Math.min(y + 1, MAX_CELL_INDEX)][x]?.ref?.focus()
-      return
+      return { x, y: Math.max(x - 1, MIN_CELL_INDEX) }
     case Direction.Up:
-      grid[Math.max(y - 1, MIN_CELL_INDEX)][x]?.ref?.focus()
-      return
+      return { x, y: Math.max(y - 1, MIN_CELL_INDEX) }
     case Direction.Right:
-      grid[y][Math.min(x + 1, MAX_CELL_INDEX)]?.ref?.focus()
-      return
+      return { x: Math.min(x + 1, MAX_CELL_INDEX), y }
   }
+}
+
+export function focusToCell(
+  direction: Direction,
+  grid: Grid,
+  x: number,
+  y: number,
+) {
+  getNewPosition(direction, x, y)
+  console.log(x, y)
+  grid[y][x]?.ref?.focus()
 }

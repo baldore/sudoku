@@ -1,8 +1,8 @@
 <script lang="ts">
   import Sudoku from './Sudoku.svelte'
-  import { makeGrid } from './sudoku'
+  import { makeEmptyGrid } from './sudoku'
 
-  const grid = makeGrid()
+  const grid = makeEmptyGrid()
 </script>
 
 <style>

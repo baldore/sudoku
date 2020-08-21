@@ -1,11 +1,26 @@
 <script lang="ts">
-  import type { Cell, Grid } from './types'
-  import { MAX_CELL_INDEX, handleKeyEvent } from './sudoku'
+  import type { Grid } from './types'
+  import {
+    MAX_CELL_INDEX,
+    isValidNumberKey,
+    isMovementKey,
+    getDirectionFromKeyEvent,
+    focusToCell,
+  } from './sudoku'
 
   export let grid: Grid
 
-  function onKeyDown(e: KeyboardEvent, cell: Cell) {
-    handleKeyEvent(e, grid, cell)
+  function onKeyDown(e: KeyboardEvent, x: number, y: number) {
+    if (isValidNumberKey(e.key)) {
+      grid[x][y].value = e.key
+      return
+    }
+
+    if (isMovementKey(e)) {
+      const direction = getDirectionFromKeyEvent(e)
+      focusToCell(direction, grid, grid[x][y])
+      return
+    }
   }
 
   function shouldRenderHSeparator(x: number): boolean {
@@ -57,23 +72,23 @@
 
 <div class="container">
   <div class="grid">
-    {#each grid as column, y}
+    {#each grid as column, x}
       <div class="row">
-        {#each column as cell, x}
+        {#each column as cell, y}
           <div class="cell">
             <input
               type="text"
-              bind:value={cell.value}
               maxlength={1}
-              on:keydown={(e) => onKeyDown(e, cell)}
-              bind:this={cell.ref} />
+              bind:value={cell.value}
+              bind:this={cell.ref}
+              on:keydown|preventDefault={(e) => onKeyDown(e, x, y)} />
           </div>
-          {#if shouldRenderHSeparator(x)}
+          {#if shouldRenderHSeparator(y)}
             <div class="h-separator" />
           {/if}
         {/each}
       </div>
-      {#if shouldRenderVSeparator(y)}
+      {#if shouldRenderVSeparator(x)}
         <div class="v-separator" />
       {/if}
     {/each}
