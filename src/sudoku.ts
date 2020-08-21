@@ -1,4 +1,4 @@
-import type { Grid, Cell } from './types'
+import type { Grid, GridCell, Cell } from './types'
 import { Direction, ARROW_CODES } from './movement'
 
 export const MIN_CELL_INDEX = 0
@@ -12,7 +12,7 @@ export function makeEmptyGrid(): Grid {
     )
 }
 
-function makeCell(opts: { x: number; y: number }): Cell {
+function makeCell(opts: Cell): GridCell {
   return {
     value: '',
     x: opts.x,
@@ -44,14 +44,14 @@ export function getDirectionFromKeyEvent(e: KeyboardEvent): Direction {
   }
 }
 
-function getNewPosition(direction: Direction, currentCell: Cell) {
+function getNewPosition(direction: Direction, currentCell: Cell): Cell {
   const { x, y } = currentCell
 
   switch (direction) {
     case Direction.Left:
       return { x: Math.max(x - 1, MIN_CELL_INDEX), y }
     case Direction.Down:
-      return { x, y: Math.max(x - 1, MIN_CELL_INDEX) }
+      return { x, y: Math.min(y + 1, MAX_CELL_INDEX) }
     case Direction.Up:
       return { x, y: Math.max(y - 1, MIN_CELL_INDEX) }
     case Direction.Right:
@@ -59,13 +59,8 @@ function getNewPosition(direction: Direction, currentCell: Cell) {
   }
 }
 
-export function focusToCell(
-  direction: Direction,
-  grid: Grid,
-  x: number,
-  y: number,
-) {
-  getNewPosition(direction, x, y)
+export function focusToCell(direction: Direction, grid: Grid, cell: Cell) {
+  const { x, y } = getNewPosition(direction, cell)
   console.log(x, y)
   grid[y][x]?.ref?.focus()
 }

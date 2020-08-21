@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Grid } from './types'
+  import type { Grid, Cell } from './types'
   import {
     MAX_CELL_INDEX,
     isValidNumberKey,
@@ -10,15 +10,18 @@
 
   export let grid: Grid
 
-  function onKeyDown(e: KeyboardEvent, x: number, y: number) {
+  function onKeyDown(e: KeyboardEvent, cell: Cell) {
+    const { x, y } = cell
+
     if (isValidNumberKey(e.key)) {
-      grid[x][y].value = e.key
+      grid[y][x].value = e.key
       return
     }
 
     if (isMovementKey(e)) {
       const direction = getDirectionFromKeyEvent(e)
-      focusToCell(direction, grid, grid[x][y])
+      console.log(direction)
+      focusToCell(direction, grid, cell)
       return
     }
   }
@@ -72,23 +75,23 @@
 
 <div class="container">
   <div class="grid">
-    {#each grid as column, x}
+    {#each grid as column, y}
       <div class="row">
-        {#each column as cell, y}
+        {#each column as cell, x}
           <div class="cell">
             <input
               type="text"
               maxlength={1}
               bind:value={cell.value}
               bind:this={cell.ref}
-              on:keydown|preventDefault={(e) => onKeyDown(e, x, y)} />
+              on:keydown|preventDefault={(e) => onKeyDown(e, { x, y })} />
           </div>
-          {#if shouldRenderHSeparator(y)}
+          {#if shouldRenderHSeparator(x)}
             <div class="h-separator" />
           {/if}
         {/each}
       </div>
-      {#if shouldRenderVSeparator(x)}
+      {#if shouldRenderVSeparator(y)}
         <div class="v-separator" />
       {/if}
     {/each}
